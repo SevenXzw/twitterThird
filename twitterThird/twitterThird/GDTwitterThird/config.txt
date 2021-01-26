@@ -1,0 +1,106 @@
+
+
+一、配置要求
+1.申请 twitter 的 consumerKey 、 consumerSecret
+  oauth_callback 的平台配置 twitterkit-consumerKey://callback?app=consumerKey
+2.配置SSO白名单
+info.plist
+<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>twitterauth</string>
+		<string>twitter</string>
+	</array>
+3.配置URL
+info.plist
+<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>twitterkit-JJiicr5UTlIT0vN3N8WneF7RU</string>
+			</array>
+		</dict>
+	</array>
+
+
+
+二、必须添加的api如下:
++ (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary *)options;
+
+代码例子:
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    
+    if ([url.absoluteString rangeOfString:consumerKey].location != NSNotFound){
+        return [GDTwitterThird application:application openURL:url options:@{}];
+    }
+}
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options{
+    
+    if ([url.absoluteString rangeOfString:consumerKey].location != NSNotFound){
+        return [GDTwitterThird application:app openURL:url options:options];
+    }
+}
+
+
+三、文本和媒体的分享例子
+NSMutableArray *arr = [NSMutableArray array];
+
+   NSData *img01 = UIImageJPEGRepresentation([UIImage imageNamed:@"configuserheadpng"], 0.9);
+   NSMutableDictionary *mudic01 = [NSMutableDictionary dictionary];
+   [mudic01 setValue:img01 forKey:@"data"];
+   [mudic01 setValue:@"byxzw1.jpeg" forKey:@"name"];
+   [arr addObject:mudic01];
+
+   NSData *img02 = UIImageJPEGRepresentation([UIImage imageNamed:@"inforlogo01"], 0.9);
+   NSMutableDictionary *mudic02 = [NSMutableDictionary dictionary];
+   [mudic02 setValue:img02 forKey:@"data"];
+   [mudic02 setValue:@"byxzw2.jpeg" forKey:@"name"];
+   [arr addObject:mudic02];
+
+   NSData *img03 = UIImageJPEGRepresentation([UIImage imageNamed:@"head_module01"], 0.9);
+   NSMutableDictionary *mudic03 = [NSMutableDictionary dictionary];
+   [mudic03 setValue:img03 forKey:@"data"];
+   [mudic03 setValue:@"byxzw3.jpeg" forKey:@"name"];
+   [arr addObject:mudic03];
+
+   [GDTwitterThird twitter_share_content:[NSString stringWithFormat:@"测试标准api上传文本byxzw20200319%@",[NWTWorkTool getNowDateStr]] andMedias:arr block:^(id  _Nonnull result2, NSError * _Nullable error3) {
+       NSLog(@"byxzw2------>%@",result2);
+   }];
+
+四、好友列表获取的例子
+    
+    [GDTwitterThird twitter_friends_list:^(id  _Nonnull result, NSError * _Nullable error) {
+        NSLog(@"byxzw1-----%@",result);
+    }];
+
+
+
+五、关于WhatsApp和Line的分享配置如下:
+
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>whatsapp</string>
+        <string>lineauth2</string>
+        <string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+        <string>lineauth</string>
+        <string>twitter</string>
+        <string>twitterauth</string>
+    </array>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>line3rdp.$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+            </array>
+        </dict>
+    <array>
+
+[GDWhatsAppThird shareWithContent:@"分享内容"];
+[GDLineThird shareWithContent:@"分享内容"];
+
+
